@@ -8,5 +8,10 @@ __pycache__/
 .ipynb_checkpoints/
 data/
 
-# OS
+# experiments
+experiments/*
+!experiments/.gitkeep
+
+# editors/OS
+.vscode/
 .DS_Store
