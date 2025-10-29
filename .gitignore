@@ -1,2 +1,12 @@
-# Ignore macOS system files
+# python
+__pycache__/
+*.pyc
+.venv/
+.env/
+
+# notebooks / data
+.ipynb_checkpoints/
+data/
+
+# OS
 .DS_Store
