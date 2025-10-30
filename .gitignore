@@ -10,6 +10,7 @@ data/
 
 # experiments
 experiments/*
+!experiments/results_log.csv
 !experiments/.gitkeep
 
 # editors/OS

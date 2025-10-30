@@ -2,8 +2,9 @@ import argparse, os, numpy as np
 from sklearn.metrics import accuracy_score, mean_squared_error
 from .data import load_classification, load_regression
 from .kernel import ntk_relu
-from .utils import set_seed
+from .utils import set_seed, append_result_row
 from .plots import plot_kernel_spectrum, plot_lambda_curve, plot_decision_boundary, plot_confmat
+
 
 def solve_ridge(K: np.ndarray, y: np.ndarray, lam: float) -> np.ndarray:
     n = K.shape[0]
@@ -47,6 +48,24 @@ def main():
         yt = (K_te @ alpha > 0).astype(int)
         print("val_acc:", accuracy_score(split.y_val, yv))
         print("test_acc:", accuracy_score(split.y_test, yt))
+        
+        row = dict(
+            task="classification",
+            depth=args.depth,
+            lam=args.lam,
+            seed=args.seed,
+            n_train=split.X_train.shape[0],
+            n_val=split.X_val.shape[0],
+            n_test=split.X_test.shape[0],
+            val_acc=float(accuracy_score(split.y_val, yv)),
+            test_acc=float(accuracy_score(split.y_test, yt)),
+            spectrum_path=locals().get("sp_path"),
+            lambda_curve_path=locals().get("lc_path"),
+            decision_boundary_path=locals().get("db_path"),
+            confusion_matrix_path=locals().get("cm_path"),
+        )
+        csv_path = append_result_row(args.outdir, row)
+        print("logged_to:", csv_path)
 
         if args.save_plots:
             # (a) spectrum on K_train
@@ -76,6 +95,7 @@ def main():
                 )
             cm_path = plot_confmat(split.y_test, yt, args.outdir)
 
+
     else:  # regression
         split = load_regression(args.seed)
 
@@ -95,6 +115,21 @@ def main():
                 a = solve_ridge(K_tr, split.y_train, lam)
                 vals.append(np.sqrt(mean_squared_error(split.y_val, (K_val @ a))))
             lc_path = plot_lambda_curve(lams, vals, task="regression", outdir=args.outdir)
+        row = dict(
+            task="regression",
+            depth=args.depth,
+            lam=args.lam,
+            seed=args.seed,
+            n_train=split.X_train.shape[0],
+            n_val=split.X_val.shape[0],
+            n_test=split.X_test.shape[0],
+            val_rmse=val_rmse,
+            test_rmse=test_rmse,
+            spectrum_path=locals().get("sp_path"),
+            lambda_curve_path=locals().get("lc_path"),
+        )
+        csv_path = append_result_row(args.outdir, row)
+        print("logged_to:", csv_path) 
 
 if __name__ == "__main__":
     main()

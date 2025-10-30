@@ -1,0 +1,2 @@
+timestamp,task,depth,lam,seed,n_train,n_val,n_test,val_acc,test_acc,spectrum_path,lambda_curve_path,decision_boundary_path,confusion_matrix_path
+2025-10-29 15:14:23,classification,1,1e-06,42,640,160,200,0.78125,0.73,,,,
